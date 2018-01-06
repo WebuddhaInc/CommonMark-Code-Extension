@@ -18,19 +18,23 @@ use League\CommonMark\ContextInterface;
 use League\CommonMark\Cursor;
 use League\CommonMark\Util\RegexHelper;
 
-class CodeParser extends AbstractBlockParser
+class ImageParser extends AbstractBlockParser
 {
 
-    const REGEXP_DEFINITION = '/\{code[:\s](.*?)\}/';
+    const REGEXP_DEFINITION = '/\!\[(.*)\]\((.*?)[\)\s](.*?)\)*$/';
 
     public function parse(ContextInterface $context, Cursor $cursor)
     {
-        $match = RegexHelper::matchAll(self::REGEXP_DEFINITION, $cursor->getLine(), $cursor->getFirstNonSpacePosition());
+        $match = RegexHelper::matchAll(self::REGEXP_DEFINITION, trim($cursor->getLine()), $cursor->getFirstNonSpacePosition());
         if ($match) {
-            $code = new Code(array(
-                'file' => $match[1]
-                ));
-            $context->addBlock($code);
+            $extra = (array)json_decode($match[3]);
+            if (empty($extra) && strlen($match[3]))
+                $extra = array('title' => $match[3]);
+            $image = new Image(array_merge(array(
+                'alt' => $match[1],
+                'src' => $match[2]
+                ), $extra));
+            $context->addBlock($image);
         }
         return false;
     }

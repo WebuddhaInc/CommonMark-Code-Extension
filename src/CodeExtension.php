@@ -26,13 +26,15 @@ class CodeExtension extends Extension
     {
         return [
             new CodeParser(),
+            new ImageParser()
             ];
     }
 
     public function getBlockRenderers()
     {
         return [
-            __NAMESPACE__.'\\Code' => new CodeRenderer()
+            __NAMESPACE__.'\\Code' => new CodeRenderer(),
+            __NAMESPACE__.'\\Image' => new ImageRenderer()
         ];
     }
 
