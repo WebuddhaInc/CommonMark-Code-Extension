@@ -26,7 +26,7 @@ class CodeExtension extends Extension
     {
         return [
             new CodeParser(),
-            new ImageParser()
+            new ImageParser() // Only for Block Images
             ];
     }
 

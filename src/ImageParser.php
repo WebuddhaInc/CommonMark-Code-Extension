@@ -21,18 +21,23 @@ use League\CommonMark\Util\RegexHelper;
 class ImageParser extends AbstractBlockParser
 {
 
-    const REGEXP_DEFINITION = '/\!\[(.*)\]\((.*?)[\)\s](.*?)\)*$/';
+    const REGEXP_DEFINITION = '/^\!\[(.*)\]\((.*?)\)$/';
 
     public function parse(ContextInterface $context, Cursor $cursor)
     {
         $match = RegexHelper::matchAll(self::REGEXP_DEFINITION, trim($cursor->getLine()), $cursor->getFirstNonSpacePosition());
         if ($match) {
-            $extra = (array)json_decode($match[3]);
-            if (empty($extra) && strlen($match[3]))
-                $extra = array('title' => $match[3]);
+            $extra = array();
+            $src = $match[2];
+            if (preg_match('/^(.*?)\s(.*)$/', $src, $smatch)) {
+                $src = $smatch[1];
+                $extra = (array)json_decode($smatch[2]);
+                if (empty($extra) && strlen($smatch[2]))
+                    $extra = array('title' => $smatch[2]);
+            }
             $image = new Image(array_merge(array(
                 'alt' => $match[1],
-                'src' => $match[2]
+                'src' => $src
                 ), $extra));
             $context->addBlock($image);
         }
