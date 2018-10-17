@@ -23,6 +23,6 @@ class ImageRenderer implements BlockRendererInterface
         if (!($block instanceof Image)) {
             throw new \InvalidArgumentException('Incompatible block type: '.get_class($block));
         }
-        return new HtmlElement('p', array('class' => 'inline-image'), new HtmlElement('img', $block->data));
+        return new HtmlElement('img', $block->data);
     }
 }
